@@ -8,13 +8,14 @@
     <OutputType>WinExe</OutputType>
     <RootNamespace>novideo_srgb</RootNamespace>
     <AssemblyName>novideo_srgb</AssemblyName>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -59,13 +60,11 @@
     <ApplicationIcon>icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="EDIDParser, Version=1.2.5.3, Culture=neutral, PublicKeyToken=310fd07b25df79b3">
-      <HintPath>..\packages\EDIDParser.1.2.5.4\lib\net45\EDIDParser.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="EDIDParser">
+      <HintPath>..\..\EDIDParserNET40\Debug\net40\EDIDParser.dll</HintPath>
     </Reference>
-    <Reference Include="NvAPIWrapper, Version=0.8.1.100, Culture=neutral, PublicKeyToken=310fd07b25df79b3">
-      <HintPath>..\packages\NvAPIWrapper.Net.0.8.1.101\lib\net45\NvAPIWrapper.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="NvAPIWrapper">
+      <HintPath>..\..\NvAPIWrapperNET40\Debug\net40\NvAPIWrapper.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
