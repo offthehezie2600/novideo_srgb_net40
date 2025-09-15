@@ -49,7 +49,7 @@ namespace novideo_srgb
             {
                 var displayInfo = new DISPLAYCONFIG_TARGET_DEVICE_NAME();
                 displayInfo.header.type = DISPLAYCONFIG_DEVICE_INFO_TYPE.DISPLAYCONFIG_DEVICE_INFO_GET_TARGET_NAME;
-                displayInfo.header.size = Marshal.SizeOf<DISPLAYCONFIG_TARGET_DEVICE_NAME>();
+                displayInfo.header.size = Marshal.SizeOf(typeof(DISPLAYCONFIG_TARGET_DEVICE_NAME));
                 displayInfo.header.adapterId = path.targetInfo.adapterId;
                 displayInfo.header.id = path.targetInfo.id;
 
@@ -57,7 +57,7 @@ namespace novideo_srgb
 
                 var colorInfo = new DISPLAYCONFIG_GET_ADVANCED_COLOR_INFO();
                 colorInfo.header.type = DISPLAYCONFIG_DEVICE_INFO_TYPE.DISPLAYCONFIG_DEVICE_INFO_GET_ADVANCED_COLOR_INFO;
-                colorInfo.header.size = Marshal.SizeOf<DISPLAYCONFIG_GET_ADVANCED_COLOR_INFO>();
+                colorInfo.header.size = Marshal.SizeOf(typeof(DISPLAYCONFIG_TARGET_DEVICE_NAME));
                 colorInfo.header.adapterId = path.targetInfo.adapterId;
                 colorInfo.header.id = path.targetInfo.id;
 

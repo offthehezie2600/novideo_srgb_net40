@@ -359,17 +359,17 @@ namespace novideo_srgb
         static Novideo()
         {
             NvAPI_GPU_GetColorSpaceConversion =
-                Marshal.GetDelegateForFunctionPointer<NvAPI_GPU_GetColorSpaceConversion_t>(
-                    NvAPI_QueryInterface(_NvAPI_GPU_GetColorSpaceConversion));
+                (NvAPI_GPU_GetColorSpaceConversion_t)Marshal.GetDelegateForFunctionPointer(
+                    NvAPI_QueryInterface(_NvAPI_GPU_GetColorSpaceConversion), typeof(NvAPI_GPU_GetColorSpaceConversion_t));
             NvAPI_GPU_SetColorSpaceConversion =
-                Marshal.GetDelegateForFunctionPointer<NvAPI_GPU_SetColorSpaceConversion_t>(
-                    NvAPI_QueryInterface(_NvAPI_GPU_SetColorSpaceConversion));
+                (NvAPI_GPU_SetColorSpaceConversion_t)Marshal.GetDelegateForFunctionPointer(
+                    NvAPI_QueryInterface(_NvAPI_GPU_SetColorSpaceConversion), typeof(NvAPI_GPU_SetColorSpaceConversion_t));
             NvAPI_GPU_GetDitherControl =
-                Marshal.GetDelegateForFunctionPointer<NvAPI_GPU_GetDitherControl_t>(
-                    NvAPI_QueryInterface(_NvAPI_GPU_GetDitherControl));
+                (NvAPI_GPU_GetDitherControl_t)Marshal.GetDelegateForFunctionPointer(
+                    NvAPI_QueryInterface(_NvAPI_GPU_GetDitherControl), typeof(NvAPI_GPU_SetColorSpaceConversion_t));
             NvAPI_GPU_SetDitherControl =
-                Marshal.GetDelegateForFunctionPointer<NvAPI_GPU_SetDitherControl_t>(
-                    NvAPI_QueryInterface(_NvAPI_GPU_SetDitherControl));
+                (NvAPI_GPU_SetDitherControl_t)Marshal.GetDelegateForFunctionPointer(
+                    NvAPI_QueryInterface(_NvAPI_GPU_SetDitherControl), typeof(NvAPI_GPU_SetColorSpaceConversion_t));
         }
     }
 }
