@@ -5,6 +5,11 @@ using System.Runtime.CompilerServices;
 using System.Windows;
 using EDIDParser;
 
+namespace System.Runtime.CompilerServices
+{
+    sealed class CallerMemberNameAttribute : Attribute { }
+}
+
 namespace novideo_srgb
 {
     public class AdvancedViewModel : INotifyPropertyChanged
