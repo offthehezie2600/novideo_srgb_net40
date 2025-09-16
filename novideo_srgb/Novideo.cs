@@ -366,10 +366,10 @@ namespace novideo_srgb
                     NvAPI_QueryInterface(_NvAPI_GPU_SetColorSpaceConversion), typeof(NvAPI_GPU_SetColorSpaceConversion_t));
             NvAPI_GPU_GetDitherControl =
                 (NvAPI_GPU_GetDitherControl_t)Marshal.GetDelegateForFunctionPointer(
-                    NvAPI_QueryInterface(_NvAPI_GPU_GetDitherControl), typeof(NvAPI_GPU_SetColorSpaceConversion_t));
+                    NvAPI_QueryInterface(_NvAPI_GPU_GetDitherControl), typeof(NvAPI_GPU_GetDitherControl_t));
             NvAPI_GPU_SetDitherControl =
                 (NvAPI_GPU_SetDitherControl_t)Marshal.GetDelegateForFunctionPointer(
-                    NvAPI_QueryInterface(_NvAPI_GPU_SetDitherControl), typeof(NvAPI_GPU_SetColorSpaceConversion_t));
+                    NvAPI_QueryInterface(_NvAPI_GPU_SetDitherControl), typeof(NvAPI_GPU_SetDitherControl_t));
         }
     }
 }
