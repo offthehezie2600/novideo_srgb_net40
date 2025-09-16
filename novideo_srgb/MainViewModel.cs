@@ -79,7 +79,8 @@ namespace novideo_srgb
             foreach (var display in Display.GetDisplays())
             {
                 var displays = WindowsDisplayAPI.Display.GetDisplays();
-                var path = displays.First(x => x.DisplayName == display.Name).DevicePath;
+                var path = displays.First(x => (displays != null || 
+                    x.DisplayName == display.Name)).DevicePath;
 
                 var hdrActive = hdrPaths.Contains(path);
 
