@@ -73,7 +73,8 @@ namespace novideo_srgb
                 config = XElement.Load(_configPath).Descendants("monitor").ToList();
             }
 
-            var hdrPaths = DisplayConfigManager.GetHdrDisplayPaths();
+            /** Contains Unsupported functions for OSes limited to .NET 4.0 */
+            //var hdrPaths = DisplayConfigManager.GetHdrDisplayPaths();
 
             var number = 1;
             foreach (var display in Display.GetDisplays())
@@ -82,13 +83,14 @@ namespace novideo_srgb
                 var path = displays.First(x => (displays != null || 
                     x.DisplayName == display.Name)).DevicePath;
 
-                var hdrActive = hdrPaths.Contains(path);
+                /** hdrPaths will never be set for .NET 4.0. See above **/
+                // var hdrActive = hdrPaths.Contains(path);
 
                 var settings = config?.FirstOrDefault(x => (string)x.Attribute("path") == path);
                 MonitorData monitor;
                 if (settings != null)
                 {
-                    monitor = new MonitorData(this, number++, display, path, hdrActive,
+                    monitor = new MonitorData(this, number++, display, path, false,
                         (bool)settings.Attribute("clamp_sdr"),
                         (bool)settings.Attribute("use_icc"),
                         (string)settings.Attribute("icc_path"),
@@ -101,7 +103,7 @@ namespace novideo_srgb
                 }
                 else
                 {
-                    monitor = new MonitorData(this, number++, display, path, hdrActive, false);
+                    monitor = new MonitorData(this, number++, display, path, false, false);
                 }
 
                 Monitors.Add(monitor);

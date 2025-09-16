@@ -6,26 +6,30 @@ using System.Runtime.InteropServices;
 
 namespace novideo_srgb
 {
+    /**
+     * Not supported on OSes limited to .NET Framework 4.0
+     *
     public static class DisplayConfigManager
     {
+        
         [DllImport("user32")]
         private static extern int GetDisplayConfigBufferSizes(QDC flags, out int numPathArrayElements, out int numModeInfoArrayElements);
 
         [DllImport("user32")]
         private static extern int QueryDisplayConfig(QDC flags, ref int numPathArrayElements, [In, Out] DISPLAYCONFIG_PATH_INFO[] pathArray, ref int numModeInfoArrayElements, [In, Out] DISPLAYCONFIG_MODE_INFO[] modeInfoArray, out DISPLAYCONFIG_TOPOLOGY_ID currentTopologyId);
-
+        
         [DllImport("user32")]
         private static extern int QueryDisplayConfig(QDC flags, ref int numPathArrayElements, [In, Out] DISPLAYCONFIG_PATH_INFO[] pathArray, ref int numModeInfoArrayElements, [In, Out] DISPLAYCONFIG_MODE_INFO[] modeInfoArray, IntPtr currentTopologyId);
-
+        
         [DllImport("user32")]
         private static extern int DisplayConfigGetDeviceInfo(ref DISPLAYCONFIG_GET_ADVANCED_COLOR_INFO requestPacket);
-
+        
         [DllImport("user32")]
         private static extern int DisplayConfigGetDeviceInfo(ref DISPLAYCONFIG_SOURCE_DEVICE_NAME requestPacket);
 
         [DllImport("user32")]
         private static extern int DisplayConfigGetDeviceInfo(ref DISPLAYCONFIG_TARGET_DEVICE_NAME requestPacket);
-
+        
         public static HashSet<string> GetHdrDisplayPaths()
         {
             Action<int> check = (e) =>
@@ -382,5 +386,5 @@ namespace novideo_srgb
         public int top;
         public int right;
         public int bottom;
-    }
+    }*/
 }
