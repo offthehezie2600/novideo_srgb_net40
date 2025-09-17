@@ -311,7 +311,10 @@ namespace novideo_srgb
             }
             catch
             {
-                return new EDID(display.Output.PhysicalGPU.ReadEDIDData(display.Output));
+                // Documentation points to the use of the NVAPI functions to read edid are not supported on
+                // OSes limited to .NET 4.0
+                //return new EDID(display.Output.PhysicalGPU.ReadEDIDData(display.Output));
+                return null;
             }
         }
 
