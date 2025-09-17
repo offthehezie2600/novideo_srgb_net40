@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -49,23 +50,44 @@ namespace novideo_srgb
             {
             }
 
+            
             Edid = Novideo.GetEDID(path, display);
 
-            Name = Edid.Descriptors.OfType<StringDescriptor>()
-                .FirstOrDefault(x => x.Type == StringDescriptorType.MonitorName)?.Value ?? "<no name>";
+            // Checking for null since current code uses NVAPI to retrieve EDID which does not
+            // seem to be supported on OSes limited to .net40
+            if (Edid != null)
+                Name = Edid.Descriptors.OfType<StringDescriptor>()
+                    .FirstOrDefault(x => x.Type == StringDescriptorType.MonitorName)?.Value ?? "<no name>";            
+            else
+                Name = "Unknown Monitor";
 
             Path = path;
             ClampSdr = clampSdr;
             HdrActive = hdrActive;
 
-            var coords = Edid.DisplayParameters.ChromaticityCoordinates;
-            EdidColorSpace = new Colorimetry.ColorSpace
+            var coords = Edid?.DisplayParameters.ChromaticityCoordinates;
+
+            if (coords != null)
             {
-                Red = new Colorimetry.Point { X = Math.Round(coords.RedX, 3), Y = Math.Round(coords.RedY, 3) },
-                Green = new Colorimetry.Point { X = Math.Round(coords.GreenX, 3), Y = Math.Round(coords.GreenY, 3) },
-                Blue = new Colorimetry.Point { X = Math.Round(coords.BlueX, 3), Y = Math.Round(coords.BlueY, 3) },
-                White = Colorimetry.D65
-            };
+                EdidColorSpace = new Colorimetry.ColorSpace
+                {
+                    Red = new Colorimetry.Point { X = Math.Round(coords.RedX, 3), Y = Math.Round(coords.RedY, 3) },
+                    Green = new Colorimetry.Point { X = Math.Round(coords.GreenX, 3), Y = Math.Round(coords.GreenY, 3) },
+                    Blue = new Colorimetry.Point { X = Math.Round(coords.BlueX, 3), Y = Math.Round(coords.BlueY, 3) },
+                    White = Colorimetry.D65
+                };
+            }
+            // Hard coding to sRGB primaries if EDID fails
+            else
+            {
+                EdidColorSpace = new Colorimetry.ColorSpace
+                {
+                    Red = new Colorimetry.Point { X = Math.Round(0.6400, 3), Y = Math.Round(0.3300, 3) },
+                    Green = new Colorimetry.Point { X = Math.Round(0.3000, 3), Y = Math.Round(0.6000, 3) },
+                    Blue = new Colorimetry.Point { X = Math.Round(0.1500, 3), Y = Math.Round(0.0600, 3) },
+                    White = Colorimetry.D65
+                };
+            }
 
             _dither = Novideo.GetDitherControl(_output);
             _clamped = Novideo.IsColorSpaceConversionActive(_output);
