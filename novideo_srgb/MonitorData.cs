@@ -50,47 +50,66 @@ namespace novideo_srgb
             {
             }
 
-            
+
             Edid = Novideo.GetEDID(path, display);
 
             // Checking for null since current code uses NVAPI to retrieve EDID which does not
             // seem to be supported on OSes limited to .net40
+            // Bypassing until I can confirm byte math with registry on test machine
+
             if (Edid != null)
-                Name = Edid.Descriptors.OfType<StringDescriptor>()
-                    .FirstOrDefault(x => x.Type == StringDescriptorType.MonitorName)?.Value ?? "<no name>";            
+            {
+                var descriptor = Edid.Descriptors.OfType<StringDescriptor>()
+                                .FirstOrDefault(x => x.Type == StringDescriptorType.MonitorName);
+                if (descriptor != null)
+                    Name = descriptor.Value;
+                else
+                    Name = "<no name>";
+            }
             else
-                Name = "Unknown Monitor";
+                Name = "<no name>";
 
             Path = path;
             ClampSdr = clampSdr;
             HdrActive = hdrActive;
 
-            var coords = Edid?.DisplayParameters.ChromaticityCoordinates;
-
-            if (coords != null)
+            // bypassing until can confirm edidparser math on test machine
+            if (Edid != null)
             {
-                EdidColorSpace = new Colorimetry.ColorSpace
+                var coords = Edid.DisplayParameters.ChromaticityCoordinates;
+
+                if (coords != null)
                 {
-                    Red = new Colorimetry.Point { X = Math.Round(coords.RedX, 3), Y = Math.Round(coords.RedY, 3) },
-                    Green = new Colorimetry.Point { X = Math.Round(coords.GreenX, 3), Y = Math.Round(coords.GreenY, 3) },
-                    Blue = new Colorimetry.Point { X = Math.Round(coords.BlueX, 3), Y = Math.Round(coords.BlueY, 3) },
-                    White = Colorimetry.D65
-                };
-            }
-            // Hard coding to sRGB primaries if EDID fails
-            else
-            {
-                EdidColorSpace = new Colorimetry.ColorSpace
+                    EdidColorSpace = new Colorimetry.ColorSpace
+                    {
+                        Red = new Colorimetry.Point { X = Math.Round(coords.RedX, 3), Y = Math.Round(coords.RedY, 3) },
+                        Green = new Colorimetry.Point { X = Math.Round(coords.GreenX, 3), Y = Math.Round(coords.GreenY, 3) },
+                        Blue = new Colorimetry.Point { X = Math.Round(coords.BlueX, 3), Y = Math.Round(coords.BlueY, 3) },
+                        White = Colorimetry.D65
+                    };
+                }
+                // Hard coding to sRGB primaries if EDID fails
+                else
                 {
-                    Red = new Colorimetry.Point { X = Math.Round(0.6400, 3), Y = Math.Round(0.3300, 3) },
-                    Green = new Colorimetry.Point { X = Math.Round(0.3000, 3), Y = Math.Round(0.6000, 3) },
-                    Blue = new Colorimetry.Point { X = Math.Round(0.1500, 3), Y = Math.Round(0.0600, 3) },
-                    White = Colorimetry.D65
-                };
+                    EdidColorSpace = new Colorimetry.ColorSpace
+                    {
+                        Red = new Colorimetry.Point { X = Math.Round(0.6400, 3), Y = Math.Round(0.3300, 3) },
+                        Green = new Colorimetry.Point { X = Math.Round(0.3000, 3), Y = Math.Round(0.6000, 3) },
+                        Blue = new Colorimetry.Point { X = Math.Round(0.1500, 3), Y = Math.Round(0.0600, 3) },
+                        White = Colorimetry.D65
+                    };
+                }
             }
 
-            _dither = Novideo.GetDitherControl(_output);
-            _clamped = Novideo.IsColorSpaceConversionActive(_output);
+            // Appears to be unsupported nvapi function on OSes limited to .net40, skipping for now
+            //_dither = Novideo.GetDitherControl(_output);
+            // force dither
+            _dither = new Novideo.DitherControl();
+            _dither.state = 2;
+
+            // Appears to be unsupported nvapi function on OSes limited to .net40, skipping for now
+            //_clamped = Novideo.IsColorSpaceConversionActive(_output);
+            _clamped = false;
 
             ProfilePath = "";
             CustomGamma = 2.2;
