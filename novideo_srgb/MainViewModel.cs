@@ -12,7 +12,7 @@ namespace novideo_srgb
 {
     public class MainViewModel
     {
-        public ObservableCollection<MonitorData> Monitors { get; }
+        public ObservableCollection<MonitorData> Monitors { get; set; }
 
         private string _configPath;
 
@@ -86,10 +86,11 @@ namespace novideo_srgb
                 /** hdrPaths will never be set for .NET 4.0. See above **/
                 // var hdrActive = hdrPaths.Contains(path);
 
-                var settings = config?.FirstOrDefault(x => (string)x.Attribute("path") == path);
                 MonitorData monitor;
-                if (settings != null)
+                if (config != null)
                 {
+                    var settings = config.FirstOrDefault(x => (string)x.Attribute("path") == path);
+
                     monitor = new MonitorData(this, number++, display, path, false,
                         (bool)settings.Attribute("clamp_sdr"),
                         (bool)settings.Attribute("use_icc"),

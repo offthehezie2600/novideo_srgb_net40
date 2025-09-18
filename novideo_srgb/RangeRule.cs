@@ -2,7 +2,6 @@
 using System.Globalization;
 using System.Linq;
 using System.Windows.Controls;
-using static System.Double;
 
 namespace novideo_srgb
 {
@@ -25,17 +24,17 @@ namespace novideo_srgb
             try
             {
                 if (valueString.Length > 0)
-                    value = Parse(valueString.Replace(',', 'a'), CultureInfo.InvariantCulture);
+                    value = Double.Parse(valueString.Replace(',', 'a'), CultureInfo.InvariantCulture);
             }
             catch (Exception e)
             {
-                return new ValidationResult(false, $"Illegal characters or {e.Message}");
+                return new ValidationResult(false, String.Format("Illegal characters or {0}", e.Message));
             }
 
             if (value < Min || value > Max)
             {
                 return new ValidationResult(false,
-                    $"Value must be between {Min} and {Max}");
+                    String.Format("Value must be between {0} and {1}", Min, Max));
             }
 
             return ValidationResult.ValidResult;

@@ -69,7 +69,10 @@ namespace novideo_srgb
                 Owner = this
             };
 
-            void CloseWindow(object o, EventArgs e2) => window.Close();
+            var CloseWindow = new EventHandler((o,e2) =>
+            {
+                window.Close();                
+            });
 
             SystemEvents.DisplaySettingsChanged += CloseWindow;
             if (window.ShowDialog() == false) return;
@@ -78,13 +81,15 @@ namespace novideo_srgb
             if (window.ChangedCalibration)
             {
                 _viewModel.SaveConfig();
-                monitor?.ReapplyClamp();
+                if (monitor != null)
+                    monitor.ReapplyClamp();
             }
 
             if (window.ChangedDither)
             {
-                monitor?.ApplyDither(window.DitherState.SelectedIndex, Math.Max(window.DitherBits.SelectedIndex, 0),
-                    Math.Max(window.DitherMode.SelectedIndex, 0));
+                if (monitor != null)
+                    monitor.ApplyDither(window.DitherState.SelectedIndex, Math.Max(window.DitherBits.SelectedIndex, 0),
+                        Math.Max(window.DitherMode.SelectedIndex, 0));
             }
         }
 

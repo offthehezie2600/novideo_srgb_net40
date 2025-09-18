@@ -74,7 +74,11 @@ namespace novideo_srgb
             _monitor.DisableOptimization = _disableOptimization;
         }
 
-        public ChromaticityCoordinates Coords => _monitor.Edid.DisplayParameters.ChromaticityCoordinates;
+        public ChromaticityCoordinates Coords {
+            get{
+                return _monitor.Edid.DisplayParameters.ChromaticityCoordinates;
+            }
+        }
 
         public bool UseEdid
         {
@@ -83,10 +87,12 @@ namespace novideo_srgb
                 if (!value == _useIcc) return;
                 _useIcc = !value;
                 OnPropertyChanged();
-                OnPropertyChanged(nameof(UseIcc));
-                OnPropertyChanged(nameof(EdidWarning));
+                OnPropertyChanged(CSharp3Extended.nameof(()=>UseIcc));
+                OnPropertyChanged(CSharp3Extended.nameof(()=>(EdidWarning)));
             }
-            get => !_useIcc;
+            get {
+                return !_useIcc;
+            }
         }
 
         public bool UseIcc
@@ -96,10 +102,12 @@ namespace novideo_srgb
                 if (value == _useIcc) return;
                 _useIcc = value;
                 OnPropertyChanged();
-                OnPropertyChanged(nameof(UseEdid));
-                OnPropertyChanged(nameof(EdidWarning));
+                OnPropertyChanged(CSharp3Extended.nameof(()=>(UseEdid)));
+                OnPropertyChanged(CSharp3Extended.nameof(()=>(EdidWarning)));
             }
-            get => _useIcc;
+            get{
+                return _useIcc;
+            }
         }
 
         public string ProfilePath
@@ -109,12 +117,18 @@ namespace novideo_srgb
                 if (value == _profilePath) return;
                 _profilePath = value;
                 OnPropertyChanged();
-                OnPropertyChanged(nameof(ProfileName));
+                OnPropertyChanged(CSharp3Extended.nameof(()=>(ProfileName)));
             }
-            get => _profilePath;
+            get {
+                return _profilePath;
+            }
         }
 
-        public string ProfileName => Path.GetFileName(ProfilePath);
+        public string ProfileName {
+            get{
+                return Path.GetFileName(ProfilePath);
+            }
+        }
 
         public bool CalibrateGamma
         {
@@ -124,7 +138,9 @@ namespace novideo_srgb
                 _calibrateGamma = value;
                 OnPropertyChanged();
             }
-            get => _calibrateGamma;
+            get{
+                return _calibrateGamma;
+            }
         }
 
         public int SelectedGamma
@@ -134,13 +150,18 @@ namespace novideo_srgb
                 if (value == _selectedGamma) return;
                 _selectedGamma = value;
                 OnPropertyChanged();
-                OnPropertyChanged(nameof(UseCustomGamma));
+                OnPropertyChanged(CSharp3Extended.nameof(()=>(UseCustomGamma)));
             }
-            get => _selectedGamma;
+            get {
+                return _selectedGamma;
+            }
         }
 
-        public Visibility UseCustomGamma =>
-            SelectedGamma == 2 || SelectedGamma == 3 ? Visibility.Visible : Visibility.Collapsed;
+        public Visibility UseCustomGamma {
+            get{
+                return SelectedGamma == 2 || SelectedGamma == 3 ? Visibility.Visible : Visibility.Collapsed;
+            }
+        }
 
         public double CustomGamma
         {
@@ -150,7 +171,9 @@ namespace novideo_srgb
                 _customGamma = value;
                 OnPropertyChanged();
             }
-            get => _customGamma;
+            get {
+                return _customGamma;
+            }
         }
 
         public int Target
@@ -160,15 +183,25 @@ namespace novideo_srgb
                 if (value == _target) return;
                 _target = value;
                 OnPropertyChanged();
-                OnPropertyChanged(nameof(EdidWarning));
+                OnPropertyChanged(CSharp3Extended.nameof(()=>(EdidWarning)));
             }
-            get => _target;
+            get {
+                return _target;
+            }
         }
 
-        public Visibility HdrWarning => _monitor.HdrActive ? Visibility.Visible : Visibility.Collapsed;
-        public Visibility EdidWarning => HdrWarning != Visibility.Visible && UseEdid && Colorimetry.ColorSpaces[_target].Equals(_monitor.EdidColorSpace)
-            ? Visibility.Visible
-            : Visibility.Collapsed;
+        public Visibility HdrWarning {
+            get{
+                return _monitor.HdrActive ? Visibility.Visible : Visibility.Collapsed;
+            }
+        }
+        public Visibility EdidWarning {
+            get{
+                return HdrWarning != Visibility.Visible && UseEdid && Colorimetry.ColorSpaces[_target].Equals(_monitor.EdidColorSpace)
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
+            }
+        }
 
         public double CustomPercentage
         {
@@ -178,7 +211,9 @@ namespace novideo_srgb
                 _customPercentage = value;
                 OnPropertyChanged();
             }
-            get => _customPercentage;
+            get {
+                return _customPercentage;
+            }
         }
 
         public bool DisableOptimization
@@ -189,7 +224,9 @@ namespace novideo_srgb
                 _disableOptimization = value;
                 OnPropertyChanged();
             }
-            get => _disableOptimization;
+            get {
+                return _disableOptimization;
+            }
         }
 
         public bool ChangedCalibration { get; set; }
@@ -201,12 +238,14 @@ namespace novideo_srgb
                 if (value == _ditherState) return;
                 _ditherState = value;
                 OnPropertyChanged();
-                OnPropertyChanged(nameof(CustomDither));
-                OnPropertyChanged(nameof(DitherMode));
-                OnPropertyChanged(nameof(DitherBits));
+                OnPropertyChanged(CSharp3Extended.nameof(()=>(CustomDither)));
+                OnPropertyChanged(CSharp3Extended.nameof(()=>(DitherMode)));
+                OnPropertyChanged(CSharp3Extended.nameof(()=>(DitherBits)));
                 ChangedDither = true;
             }
-            get => _ditherState;
+            get {
+                return _ditherState;
+            }
         }
 
         public int DitherMode
@@ -218,7 +257,9 @@ namespace novideo_srgb
                 OnPropertyChanged();
                 ChangedDither = true;
             }
-            get => _ditherState == 0 ? -1 : _ditherMode;
+            get {
+                return _ditherState == 0 ? -1 : _ditherMode;
+            }
         }
 
         public int DitherBits
@@ -230,16 +271,25 @@ namespace novideo_srgb
                 OnPropertyChanged();
                 ChangedDither = true;
             }
-            get => _ditherState == 0 ? -1 : _ditherBits;
+            get {
+                return _ditherState == 0 ? -1 : _ditherBits;
+            }
         }
 
-        public bool CustomDither => DitherState == 1;
+        public bool CustomDither
+        {
+            get
+            {
+                return DitherState == 1;
+            }
+        }
 
         public bool ChangedDither { get; set; }
 
         private void OnPropertyChanged([CallerMemberName] string name = null)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+            if (PropertyChanged != null)
+                PropertyChanged.Invoke(this, new PropertyChangedEventArgs(name));            
         }
     }
 }

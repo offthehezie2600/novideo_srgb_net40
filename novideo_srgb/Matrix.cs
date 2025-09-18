@@ -12,8 +12,13 @@ namespace novideo_srgb
 
         public double this[int x, int y]
         {
-            get => _values[x, y];
-            set => _values[x, y] = value;
+            get {
+                return _values[x, y];
+            }
+
+            set{
+                _values[x, y] = value;
+            }
         }
 
         public double this[int x]
@@ -38,8 +43,19 @@ namespace novideo_srgb
             }
         }
 
-        public int Rows => _values.GetLength(0);
-        public int Cols => _values.GetLength(1);
+        public int Rows {
+            get{
+                return _values.GetLength(0);
+            }
+        }
+
+        public int Cols
+        {
+            get
+            {
+                return _values.GetLength(1);
+            }
+        }
 
         public static Matrix FromValues(double[,] array)
         {

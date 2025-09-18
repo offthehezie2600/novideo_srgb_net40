@@ -55,42 +55,61 @@ namespace novideo_srgb
 
             // Checking for null since current code uses NVAPI to retrieve EDID which does not
             // seem to be supported on OSes limited to .net40
+            // Bypassing until I can confirm byte math with registry on test machine
+
             if (Edid != null)
-                Name = Edid.Descriptors.OfType<StringDescriptor>()
-                    .FirstOrDefault(x => x.Type == StringDescriptorType.MonitorName)?.Value ?? "<no name>";            
+            {
+                var descriptor = Edid.Descriptors.OfType<StringDescriptor>()
+                                .FirstOrDefault(x => x.Type == StringDescriptorType.MonitorName);
+                if (descriptor != null)
+                    Name = descriptor.Value;
+                else
+                    Name = "<no name>";
+            }
             else
-                Name = "Unknown Monitor";
+                Name = "<no name>";
 
             Path = path;
             ClampSdr = clampSdr;
             HdrActive = hdrActive;
 
-            var coords = Edid?.DisplayParameters.ChromaticityCoordinates;
-
-            if (coords != null)
+            // bypassing until can confirm edidparser math on test machine
+            if (Edid != null)
             {
-                EdidColorSpace = new Colorimetry.ColorSpace
-                {
-                    Red = new Colorimetry.Point { X = Math.Round(coords.RedX, 3), Y = Math.Round(coords.RedY, 3) },
-                    Green = new Colorimetry.Point { X = Math.Round(coords.GreenX, 3), Y = Math.Round(coords.GreenY, 3) },
-                    Blue = new Colorimetry.Point { X = Math.Round(coords.BlueX, 3), Y = Math.Round(coords.BlueY, 3) },
-                    White = Colorimetry.D65
-                };
-            }
-            // Hard coding to sRGB primaries if EDID fails
-            else
-            {
-                EdidColorSpace = new Colorimetry.ColorSpace
-                {
-                    Red = new Colorimetry.Point { X = Math.Round(0.6400, 3), Y = Math.Round(0.3300, 3) },
-                    Green = new Colorimetry.Point { X = Math.Round(0.3000, 3), Y = Math.Round(0.6000, 3) },
-                    Blue = new Colorimetry.Point { X = Math.Round(0.1500, 3), Y = Math.Round(0.0600, 3) },
-                    White = Colorimetry.D65
-                };
-            }
+                var coords = Edid.DisplayParameters.ChromaticityCoordinates;
 
-            _dither = Novideo.GetDitherControl(_output);
-            _clamped = Novideo.IsColorSpaceConversionActive(_output);
+                if (coords != null)
+                {
+                    EdidColorSpace = new Colorimetry.ColorSpace
+                    {
+                        Red = new Colorimetry.Point { X = Math.Round(coords.RedX, 3), Y = Math.Round(coords.RedY, 3) },
+                        Green = new Colorimetry.Point { X = Math.Round(coords.GreenX, 3), Y = Math.Round(coords.GreenY, 3) },
+                        Blue = new Colorimetry.Point { X = Math.Round(coords.BlueX, 3), Y = Math.Round(coords.BlueY, 3) },
+                        White = Colorimetry.D65
+                    };
+                }
+                // Hard coding to sRGB primaries if EDID fails
+                else
+                {
+                    EdidColorSpace = new Colorimetry.ColorSpace
+                    {
+                        Red = new Colorimetry.Point { X = Math.Round(0.6400, 3), Y = Math.Round(0.3300, 3) },
+                        Green = new Colorimetry.Point { X = Math.Round(0.3000, 3), Y = Math.Round(0.6000, 3) },
+                        Blue = new Colorimetry.Point { X = Math.Round(0.1500, 3), Y = Math.Round(0.0600, 3) },
+                        White = Colorimetry.D65
+                    };
+                }
+            }
+            
+            // Appears to be unsupported nvapi function on OSes limited to .net40, skipping for now
+            //_dither = Novideo.GetDitherControl(_output);
+            // force dither
+            _dither = new Novideo.DitherControl();
+            _dither.state = 2;
+
+            // Appears to be unsupported nvapi function on OSes limited to .net40, skipping for now
+            //_clamped = Novideo.IsColorSpaceConversionActive(_output);
+            _clamped = false;
 
             ProfilePath = "";
             CustomGamma = 2.2;
@@ -112,12 +131,12 @@ namespace novideo_srgb
             DisableOptimization = disableOptimization;
         }
 
-        public int Number { get; }
-        public string Name { get; }
-        public EDID Edid { get; }
-        public string Path { get; }
+        public int Number { get; set; }
+        public string Name { get; set; }
+        public EDID Edid { get; set; }
+        public string Path { get; set; }
         public bool ClampSdr { get; set; }
-        public bool HdrActive { get; }
+        public bool HdrActive { get; set; }
 
         private void UpdateClamp(bool doClamp)
         {
@@ -181,7 +200,7 @@ namespace novideo_srgb
             _clamped = Novideo.IsColorSpaceConversionActive(_output);
             ClampSdr = _clamped;
             _viewModel.SaveConfig();
-            OnPropertyChanged(nameof(Clamped));
+            OnPropertyChanged(CSharp3Extended.nameof(()=>Clamped));
         }
         
         public bool Clamped
@@ -203,7 +222,9 @@ namespace novideo_srgb
                 _clamped = value;
                 OnPropertyChanged();
             }
-            get => _clamped;
+            get {
+                return _clamped;
+            }
         }
 
         public void ReapplyClamp()
@@ -213,7 +234,7 @@ namespace novideo_srgb
                 var clamped = CanClamp && ClampSdr;
                 UpdateClamp(clamped);
                 _clamped = clamped;
-                OnPropertyChanged(nameof(CanClamp));
+                OnPropertyChanged(CSharp3Extended.nameof(()=>CanClamp));
             }
             catch (Exception e)
             {
@@ -221,14 +242,26 @@ namespace novideo_srgb
             }
         }
 
-        public bool CanClamp => !HdrActive && (UseEdid && !EdidColorSpace.Equals(TargetColorSpace) || UseIcc && ProfilePath != "");
+        public bool CanClamp {
+            get{
+                return !HdrActive && (UseEdid && !EdidColorSpace.Equals(TargetColorSpace) || UseIcc && ProfilePath != "");
+            }
+        }
 
-        public string GPU => _output.PhysicalGPU.FullName;
+        public string GPU {
+            get {
+                return _output.PhysicalGPU.FullName;
+            }
+        }
 
         public bool UseEdid
         {
-            set => UseIcc = !value;
-            get => !UseIcc;
+            set {
+                UseIcc = !value;
+            }
+            get {
+                return !UseIcc;
+            }
         }
 
         public bool UseIcc { set; get; }
@@ -247,11 +280,19 @@ namespace novideo_srgb
 
         public int Target { set; get; }
 
-        public Colorimetry.ColorSpace EdidColorSpace { get; }
+        public Colorimetry.ColorSpace EdidColorSpace { get; set; }
 
-        private Colorimetry.ColorSpace TargetColorSpace => Colorimetry.ColorSpaces[Target];
+        private Colorimetry.ColorSpace TargetColorSpace {
+            get{
+                return Colorimetry.ColorSpaces[Target];
+            }
+        }
 
-        public Novideo.DitherControl DitherControl => _dither;
+        public Novideo.DitherControl DitherControl {
+            get{
+                return _dither;
+            }
+        }
 
         public string DitherString
         {
@@ -278,7 +319,13 @@ namespace novideo_srgb
             }
         }
 
-        public int BitDepth => _bitDepth;
+        public int BitDepth
+        {
+            get
+            {
+                return _bitDepth;
+            }
+        }
 
         public void ApplyDither(int state, int bits, int mode)
         {
@@ -286,7 +333,7 @@ namespace novideo_srgb
             {
                 Novideo.SetDitherControl(_output, state, bits, mode);
                 _dither = Novideo.GetDitherControl(_output);
-                OnPropertyChanged(nameof(DitherString));
+                OnPropertyChanged(CSharp3Extended.nameof(()=>DitherString));
             }
             catch (Exception e)
             {
@@ -296,7 +343,8 @@ namespace novideo_srgb
 
         private void OnPropertyChanged([CallerMemberName] string name = null)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+            if (PropertyChanged != null)
+                PropertyChanged.Invoke(this, new PropertyChangedEventArgs(name));
         }
     }
 }

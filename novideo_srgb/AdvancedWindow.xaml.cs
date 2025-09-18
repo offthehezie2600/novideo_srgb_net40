@@ -58,7 +58,18 @@ namespace novideo_srgb
             DialogResult = true;
         }
 
-        public bool ChangedCalibration => _viewModel.ChangedCalibration;
-        public bool ChangedDither => _viewModel.ChangedDither;
+        public bool ChangedCalibration {
+            get{
+                return _viewModel.ChangedCalibration;
+            }
+        }
+
+        public bool ChangedDither
+        {
+            get
+            {
+                return _viewModel.ChangedDither;
+            }
+        }
     }
 }

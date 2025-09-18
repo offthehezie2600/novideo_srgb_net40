@@ -1,10 +1,11 @@
 ﻿// credit to https://mina86.com/2019/srgb-xyz-matrix/ and http://www.brucelindbloom.com/ for the math
+using System;
 
 namespace novideo_srgb
 {
     public static class Colorimetry
     {
-        public struct Point
+        public struct Point : IEquatable<Point>
         {
             public bool Equals(Point other)
             {
@@ -13,7 +14,12 @@ namespace novideo_srgb
 
             public override bool Equals(object obj)
             {
-                return obj is Point other && Equals(other);
+                if (!(obj is Point))
+                {
+                    return false;
+                }
+                Point other = (Point)obj;
+                return X == other.X && Y == other.Y;
             }
 
             public override int GetHashCode()
@@ -38,7 +44,13 @@ namespace novideo_srgb
 
             public override bool Equals(object obj)
             {
-                return obj is ColorSpace other && Equals(other);
+                if (!(obj is ColorSpace))
+                {
+                    return false;
+                }
+                ColorSpace other = (ColorSpace)obj;
+                return Red.Equals(other.Red) && Green.Equals(other.Green) 
+                    && Blue.Equals(other.Blue) && White.Equals(other.White);
             }
 
             public override int GetHashCode()
@@ -93,7 +105,13 @@ namespace novideo_srgb
             White = D65
         };
 
-        public static ColorSpace[] ColorSpaces => new[] { sRGB, DisplayP3, AdobeRGB, BT2020 };
+        public static ColorSpace[] ColorSpaces
+        {
+            get
+            {
+                return new[] { sRGB, DisplayP3, AdobeRGB, BT2020 };
+            }
+        }
 
         public static Matrix D50 = Matrix.FromValues(new[,] { { 0.9642 }, { 1 }, { 0.8249 } });
 

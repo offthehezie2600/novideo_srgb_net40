@@ -289,8 +289,11 @@ namespace novideo_srgb
                 // default GPU driver state or explicitly disabled
                 case 0:
                 // unity HDR output
-                case 12 when csc.contentColorSpace == 12 && csc.matrix1 == null && csc.matrix2 == null:
-                    return false;
+                case 12:
+                    if (csc.contentColorSpace == 12 && csc.matrix1 == null && csc.matrix2 == null)
+                        return false;
+                    else
+                        return true;
                 default:
                     return true;
             }
@@ -313,8 +316,7 @@ namespace novideo_srgb
             {
                 // Documentation points to the use of the NVAPI functions to read edid are not supported on
                 // OSes limited to .NET 4.0
-                //return new EDID(display.Output.PhysicalGPU.ReadEDIDData(display.Output));
-                return null;
+                return new EDID(display.Output.PhysicalGPU.ReadEDIDData(display.Output));                
             }
         }
 

@@ -42,7 +42,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DebugType>full</DebugType>
     <PlatformTarget>x64</PlatformTarget>
-    <LangVersion>7.3</LangVersion>
+    <LangVersion>default</LangVersion>
     <ErrorReport>prompt</ErrorReport>
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
@@ -61,11 +61,12 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="EDIDParser">
-      <HintPath>..\..\EDIDParserNET40\Debug\net40\EDIDParser.dll</HintPath>
+      <HintPath>bin\x64\Debug\EDIDParser.dll</HintPath>
     </Reference>
     <Reference Include="NvAPIWrapper">
-      <HintPath>..\..\NvAPIWrapperNET40\Debug\net40\NvAPIWrapper.dll</HintPath>
+      <HintPath>bin\x64\Debug\NvAPIWrapper.dll</HintPath>
     </Reference>
+    <Reference Include="PresentationCore" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -81,10 +82,9 @@
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
     <Reference Include="WindowsBase" />
-    <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="WindowsDisplayAPI">
-      <HintPath>..\..\WindowsDisplayAPI_NET40\Debug\net40\WindowsDisplayAPI.dll</HintPath>
+      <HintPath>bin\x64\Debug\WindowsDisplayAPI.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -95,6 +95,7 @@
     <Compile Include="AboutWindow.xaml.cs">
       <DependentUpon>AboutWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="CSharp3Extended.cs" />
     <Compile Include="DisplayConfigManager.cs" />
     <Compile Include="LstarEOTF.cs" />
     <Compile Include="Lut16.cs" />
