@@ -54,8 +54,7 @@ namespace novideo_srgb
             Edid = Novideo.GetEDID(path, display);
 
             // Checking for null since current code uses NVAPI to retrieve EDID which does not
-            // seem to be supported on OSes limited to .net40
-            // Bypassing until I can confirm byte math with registry on test machine
+            // seem to be supported on OSes limited to .net40            
 
             if (Edid != null)
             {
@@ -72,8 +71,7 @@ namespace novideo_srgb
             Path = path;
             ClampSdr = clampSdr;
             HdrActive = hdrActive;
-
-            // bypassing until can confirm edidparser math on test machine
+            
             if (Edid != null)
             {
                 var coords = Edid.DisplayParameters.ChromaticityCoordinates;
